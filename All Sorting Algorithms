@@ -1,0 +1,477 @@
+#include <stdio.h>
+#include <iostream>
+#include <array>
+#include <vector>
+#include <list>
+#include <string>
+#include <stdlib.h>
+#include<time.h> 
+using namespace std;
+
+#define Size 100
+#define radix 10
+template <class X>
+class Sorting
+{
+public:
+	X array[Size];
+	int size1;
+	int l;
+	int choice3;
+
+	inline void radixSort(X* arr, int n, int max) // n is size and max is max num of digits in array (1-100 means max is 3 i.e 100)
+	{
+		int i, j, m, p = 1, index, temp, count = 0;
+		list<X> list[radix];
+
+		for (i = 0; i < max; i++)
+		{
+			m = pow(radix, i + 1);
+			p = pow(radix, i);
+
+			for (j = 0; j < n; j++)
+			{
+				temp = (int)arr[j] % m;
+				index = temp / p;      //find index for list array
+				list[index].push_back(arr[j]);
+			}
+
+			count = 0;
+
+			for (j = 0; j < 10; j++)
+			{
+				//delete from linked lists and store to array
+				while (!list[j].empty())
+				{
+					arr[count] = *(list[j].begin());
+					list[j].erase(list[j].begin());
+					count++;
+				}
+			}
+		}
+	}
+
+	size_t getMax(string arr[], int n)
+	{
+		size_t max = arr[0].size();
+		for (int i = 1; i < n; i++)
+		{
+			if (arr[i].size() > max)
+				max = arr[i].size();
+		}
+		return max;
+	}
+
+	void countSort(string a[], int size1, size_t k)
+	{
+		string* b = NULL; int* c = NULL;
+		b = new string[size1];
+		c = new int[257];
+
+		for (int i = 0; i < 257; i++)
+			c[i] = 0;
+		for (int j = 0; j < size1; j++)
+			c[k < a[j].size() ? (int)(unsigned char)a[j][k] + 1 : 0]++;
+
+		for (int f = 1; f < 257; f++)
+			c[f] += c[f - 1];
+
+		for (int r = size1 - 1; r >= 0; r--)
+		{
+			b[c[k < a[r].size() ? (int)(unsigned char)a[r][k] + 1 : 0] - 1] = a[r];
+			c[k < a[r].size() ? (int)(unsigned char)a[r][k] + 1 : 0]--;
+		}
+
+		for (int l = 0; l < size1; l++)
+			a[l] = b[l];
+
+		// avold memory leak
+		delete[] b;
+		delete[] c;
+	}
+
+	void radixSort(string b[], int r)
+	{
+		size_t max = getMax(b, r);
+		for (size_t digit = max; digit > 0; digit--)
+			countSort(b, r, digit - 1);
+	}
+
+	void getArray()
+	{
+		int i = 0;
+		cout << "Enter the size of an Array " << endl;
+		cin >> size1;
+		if (size1 > 100) {
+			cout << "Array Out of Bound " << endl;
+			exit(0);
+		}
+		cout << "Enter Elements in an Array " << endl;
+		for (int i = 0; i < size1; i++)
+		{
+			cin >> array[i];
+		}
+		system("cls");
+	}
+	int partition(X* array, int start, int end) {
+		X pivot = array[end];
+		int Pindex = start;
+		for (int i = start; i < end; i++)
+		{
+			if (array[i] >= pivot)
+			{
+				swap(array[i], array[Pindex]);
+				Pindex++;
+			}
+		}
+		swap(array[Pindex], array[end]);
+		return Pindex;
+	}
+
+	void quickSort(X* array, int start, int end) {
+		if (start < end) {
+			int Pindex = partition(array, start, end);
+			quickSort(array, start, Pindex - 1);
+			quickSort(array, Pindex + 1, end);
+		}
+	}
+
+	void mergeSort(X array[], int low, int high)
+	{
+		int mid;
+		if (low < high)
+		{
+			mid = (low + high) / 2;
+			mergeSort(array, low, mid);
+			mergeSort(array, mid + 1, high);
+			merge(array, low, mid, high);
+		}
+	}
+	void merge(X array[], int low, int mid, int high)
+	{
+		X temp[100];
+		int i, j, k;
+		i = low;
+		j = mid + 1;
+		k = 0;
+
+		while ((i <= mid) && (j <= high))
+		{
+			if (array[i] < array[j])
+			{
+				temp[k] = array[i];
+				k++;
+				i++;
+			}
+			else
+			{
+				temp[k] = array[j];
+				k++;
+				j++;
+			}
+		}
+
+		while (i <= mid)
+		{
+			temp[k] = array[i];
+			i++;
+			k++;
+		}
+		while (j <= high)
+		{
+			temp[k] = array[j];
+			j++;
+			k++;
+		}
+
+		for (i = low; i <= high; i++)
+		{
+			array[i] = temp[i - low];
+		}
+	}
+	void SelectionSort(X array[], int n)
+	{
+		for (int i = 0, j, least; i < n - 1; i++)
+		{
+			for (j = i + 1, least = i; j < n; j++)
+			{
+				if (array[j] < array[least])
+				{
+					least = j;
+				}
+			}
+			swap(array[least], array[i]);
+		}
+	}
+	void getMergeSort()
+	{
+		Sorting s;
+		s.getArray();
+		cout << "Array Elements before Sort : ";
+		s.PrintArray();
+		cout << "Which order do you want to sort.\n-> Press 1 (Asc)\n-> Press to (Desc)" << endl;
+		cin >> l;
+		clock_t startTime = clock();
+		s.mergeSort(s.array, 0, s.size1 - 1);
+		clock_t endTime = clock();
+		cout << "Sorted Array : ";
+		if (l == 1)
+			s.PrintArray();
+		else if (l == 2)
+			s.DescPrintArray();
+		cout << "Time taken : " << double(endTime - startTime) / CLOCKS_PER_SEC << endl;
+		system("pause");
+
+	}
+	void getSelectionSort()
+	{
+		Sorting s;
+		s.getArray();
+		cout << "Array Elements before Sort : ";
+		s.PrintArray();
+		cout << "Which order do you want to sort.\n-> Press 1 (Asc)\n-> Press to (Desc)" << endl;
+		cin >> l;
+		clock_t startTime = clock();
+		s.SelectionSort(s.array, s.size1);
+		clock_t endTime = clock();
+		cout << "Sorted Array : ";
+		if (l == 1)
+			s.PrintArray();
+		else if (l == 2)
+			s.DescPrintArray();
+		cout << "Time taken : " << double(endTime - startTime) / CLOCKS_PER_SEC << endl;
+		system("pause");
+
+	}
+	void getQuickSort()
+	{
+		Sorting s;
+		s.getArray();
+		cout << "Array Elements before Sort : ";
+		s.PrintArray();
+		cout << "Which order do you want to sort.\n-> Press 1 (Asc)\n-> Press to (Desc)" << endl;
+		cin >> l;
+		clock_t startTime = clock();
+		s.quickSort(s.array, 0, s.size1);
+		clock_t endTime = clock();
+		cout << "Sorted Array : ";
+		if (l == 1)
+			s.DescPrintArray();
+		else if (l == 2)
+			s.PrintArray();
+		cout << "Time taken : " << double(endTime - startTime) / CLOCKS_PER_SEC << endl;
+		system("pause");
+
+
+
+	}
+	void getlongradixSort()
+	{
+		Sorting s;
+		s.getArray();
+		cout << "Array Elements before Sort : ";
+		s.PrintArray();
+		cout << "Which order do you want to sort.\n-> Press 1 (Asc)\n-> Press to (Desc)" << endl;
+		cin >> l;
+		clock_t startTime = clock();
+		s.radixSort(s.array, s.size1, 3);
+		clock_t endTime = clock();
+		cout << "Sorted Array : ";
+		if (l == 1)
+			s.PrintArray();
+		else if (l == 2)
+			s.DescPrintArray();
+		cout << "Time taken : " << double(endTime - startTime) / CLOCKS_PER_SEC << endl;
+		system("pause");
+
+
+
+	}
+	void getfloatradixSort()
+	{
+		Sorting s;
+		s.getArray();
+		cout << "Array Elements before Sort : ";
+		s.PrintArray();
+		cout << "Which order do you want to sort.\n-> Press 1 (Asc)\n-> Press to (Desc)" << endl;
+		cin >> l;
+		clock_t startTime = clock();
+		s.radixSort(s.array, s.size1, 6);
+		clock_t endTime = clock();
+		cout << "Sorted Array : ";
+		if (l == 1)
+			s.PrintArray();
+		else if (l == 2)
+			s.DescPrintArray();
+		cout << "Time taken : " << double(endTime - startTime) / CLOCKS_PER_SEC << endl;
+		system("pause");
+
+
+
+	}
+	void getstringradixSort()
+	{
+		Sorting s;
+		s.getArray();
+		cout << "Array Elements before Sort : ";
+		s.PrintArray();
+		cout << "Which order do you want to sort.\n-> Press 1 (Asc)\n-> Press to (Desc)" << endl;
+		cin >> l;
+		clock_t startTime = clock();
+		s.radixSort(s.array, s.size1);
+		clock_t endTime = clock();
+		cout << "Sorted Array : ";
+		if (l == 1)
+			s.PrintArray();
+		else if (l == 2)
+			s.DescPrintArray();
+		cout << "Time taken : " << double(endTime - startTime) / CLOCKS_PER_SEC << endl;
+		system("pause");
+
+
+
+	}
+	void PrintArray()
+	{
+		for (int i = 0; i < size1; i++)
+		{
+			cout << array[i] << " ";
+		}
+		cout << endl;
+	}
+	void DescPrintArray()
+	{
+		for (int i = size1 - 1; i >= 0; i--)
+		{
+			cout << array[i] << " ";
+		}
+		cout << endl;
+
+	}
+
+};
+
+void main()
+{
+	int choice1;
+	int choice2;
+label1:do
+{
+	cout << "Which Data Type you want to Sort " << endl;
+	cout << "->Press 1 (Long) \n->Press 2 (Float)\n->Press 3 (String)\n->Press -1 (EXIT)" << endl;
+	cout << "Choice : ";
+
+	cin >> choice1;
+	cout << endl;
+	if (choice1 == 1)
+	{
+		Sorting<long> sortLong;
+		cout << "\nWhich Sorting Algorithm you want to use " << endl;
+		cout << "->Press 1 (Quick Sort)\n->Press 2 (Merge Sort)\n->Press 3 (Selection Sort)\n->Press 4 (Radix Sort)\n->Press 5 (Select Data Type)\n-> Press -1 (EXIT)" << endl;
+		cout << "Choice : ";
+	label:do
+	{
+		cin >> choice2;
+		cout << endl;
+		if (choice2 == 1)
+			sortLong.getQuickSort();
+		else if (choice2 == 2)
+			sortLong.getMergeSort();
+		else if (choice2 == 3)
+			sortLong.getSelectionSort();
+		else if (choice2 == 4)
+			sortLong.getlongradixSort();
+		else if (choice2 == 5)
+			goto label1;
+
+		else if (choice2 == -1)
+			exit(0);
+		else
+		{
+			cout << "Invalid. Select again ";
+			goto label;
+		}
+		system("cls");
+		goto label1;
+
+	} while (choice2 != -1);
+	}
+	else if (choice1 == 2)
+	{
+
+		Sorting<float> sortFloat;
+		cout << "\nWhich Sorting Algorithm you want to use " << endl;
+		cout << "->Press 1 (Quick Sort)\n->Press 2 (Merge Sort)\n->Press 3 (Selection Sort)\n->Press 4 (Radix Sort)\n->Press 5 (Select Data Type)\n-> Press -1 (EXIT)" << endl;
+		cout << "Choice : ";
+
+	label2:do
+	{
+		cin >> choice2;
+		cout << endl;
+		if (choice2 == 1)
+			sortFloat.getQuickSort();
+		else if (choice2 == 2)
+			sortFloat.getMergeSort();
+		else if (choice2 == 3)
+			sortFloat.getSelectionSort();
+		else if (choice2 == 4)
+			sortFloat.getfloatradixSort();
+		else if (choice2 == 5)
+			goto label1;
+		else if (choice2 == -1)
+			exit(0);
+		else
+		{
+			cout << "Invalid. Select again ";
+			goto label2;
+		}
+		system("cls");
+		goto label1;
+
+	} while (choice2 != -1);
+	}
+	else if (choice1 == 3)
+	{
+
+		Sorting<string> sortString;
+		cout << "\nWhich Sorting Algorithm you want to use " << endl;
+		cout << "->Press 1 (Quick Sort)\n->Press 2 (Merge Sort)\n->Press 3 (Selection Sort)\n->Press 4 (Radix Sort)\n->Press 5 (Select Data Type)\n-> Press -1 (EXIT)" << endl;
+		cout << "Choice : ";
+
+	label3:do
+	{
+		cin >> choice2;
+		cout << endl;
+		if (choice2 == 1)
+			sortString.getQuickSort();
+		else if (choice2 == 2)
+			sortString.getMergeSort();
+		else if (choice2 == 3)
+			sortString.getSelectionSort();
+		else if (choice2 == 4)
+			sortString.getstringradixSort();
+		else if (choice2 == 5)
+			goto label1;
+		else if (choice2 == -1)
+			exit(0);
+		else
+		{
+			cout << "Invalid. Select again ";
+			goto label3;
+		}
+		system("cls");
+		goto label1;
+
+	} while (choice2 != -1);
+	}
+	else if (choice1 == -1)
+	{
+		exit(0);
+	}
+	else
+	{
+		cout << "Invalid. Select again " << endl;
+		goto label1;
+	}
+} while (choice1 != -1);
+}
