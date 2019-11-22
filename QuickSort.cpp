@@ -25,20 +25,21 @@ using namespace std;
 				}
 			}
 		}
-		swap(array[Pindex], array[end]);
+		swap(array[Pindex], array[end]);// swap funcion for swapping the last selected element and the element at Pindex position
 		return Pindex;
 	}
 
-	template <class X>
+	template <class X>//Making a template class
 	void quickSort(X *array, int start, int end, bool asc) {
 		if (start < end) {
 			int Pindex = partition<X>(array, start, end, asc);
+			//Recursive calls below
 			quickSort(array, start, Pindex - 1, asc);
 			quickSort(array, Pindex + 1, end, asc);
 		}
 	}
 
-	template<class Z>
+	template<class Z>//Making template for creation of any type of array
 	void getArrTypeInp() {
 		system("cls");
 
