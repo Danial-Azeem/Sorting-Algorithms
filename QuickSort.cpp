@@ -1,14 +1,14 @@
-//Calling three libraries for using different funtions of them used for sorting.
+// Calling three libraries for using different funtions of them used for sorting.
 #include <iostream>
 #include <algorithm>
 #include <string>
 using namespace std;
-//Making a template (used for creating any type of array)
+// Making a template (used for creating any type of array)
 	template <class T>
 	int partition(T* array, int start, int end, bool asc){
 		T pivot = array[end]; // Selecting a pivot point
 		int Pindex = start; // for comparing selecting an element as starting element named Pindex.
-		//for loop including functions of swap for sorting in ascending or descending order
+		// for loop including functions of swap for sorting in ascending or descending order
 		for (int i = start; i < end; i++)
 		{
 			if (asc){
@@ -29,7 +29,7 @@ using namespace std;
 		return Pindex;
 	}
 
-	template <class X>//Making a template class
+	template <class X>// Making a template class
 	void quickSort(X *array, int start, int end, bool asc) {
 		if (start < end) {
 			int Pindex = partition<X>(array, start, end, asc);
@@ -39,7 +39,7 @@ using namespace std;
 		}
 	}
 
-	template<class Z>//Making template for creation of any type of array
+	template<class Z>// Making template for creation of any type of array
 	void getArrTypeInp() {
 		system("cls");
 
